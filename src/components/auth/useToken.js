@@ -1,15 +1,19 @@
-import {useState} from "react";
+import {useSelector, useDispatch} from "react-redux";
 
 export default function useToken() {
-
-    function getToken() {
-        return sessionStorage.getItem("token");
+    const dispatch = useDispatch();
+    const token = useSelector((state) => state.token);
+    let session_token = sessionStorage.getItem("token");
+    if (session_token === 'null') {
+        session_token = null;
+    }
+    if (token !== session_token) {
+        saveToken(sessionStorage.getItem("token"));
     }
 
-    const [token, setToken] = useState(getToken())
     function saveToken(token) {
+        dispatch({type: 'SET_TOKEN', token: token});
         sessionStorage.setItem("token", token);
-        setToken(token)
     }
     return [token, saveToken];
 };
